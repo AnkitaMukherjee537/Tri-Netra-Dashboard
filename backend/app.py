@@ -9,9 +9,7 @@ import os
 
 app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
 CORS(app)
-@app.route("/")
-def home():
-    return "Tri-Netra Backend is Running 🚀"
+
 # In-memory storage for accidents
 accidents_db = []
 
@@ -129,5 +127,17 @@ if __name__ == '__main__':
         # Otherwise fallback to index.html for React router
         return app.send_static_file('index.html')
 
-    app.run(debug=True, port=5000, use_reloader=False) 
-    # use_reloader=False to prevent starting background thread twice
+    app.run(host="0.0.0.0", port=int(__import__("os").environ.get("PORT", 5000)))
+
+# ===== AUTO-ADDED API ROUTE =====
+@app.route("/api/accidents", methods=["GET"])
+def get_accidents_api():
+    return jsonify(accidents_db)
+
+# ===== AUTO-ADDED GENERATOR =====
+def run_generator():
+    while True:
+        accidents_db.insert(0, generate_dummy_accident())
+        time.sleep(3)
+
+threading.Thread(target=run_generator, daemon=True).start()
