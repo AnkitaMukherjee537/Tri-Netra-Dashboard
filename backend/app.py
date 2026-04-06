@@ -9,7 +9,9 @@ import os
 
 app = Flask(__name__, static_folder="../frontend/dist", static_url_path="/")
 CORS(app)
-
+@app.route("/")
+def home():
+    return "Tri-Netra Backend is Running 🚀"
 # In-memory storage for accidents
 accidents_db = []
 
